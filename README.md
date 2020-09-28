@@ -2,10 +2,18 @@
 
 ### Building
 
+Need Go 1.13+ with module mode turned on by default.
+I wrote this with Go 1.15.
+
+To build the application type:
+
 ```
 make clean
 make
 ```
+
+This should create a binary: *./chatserver*.
+
 
 ### Running
 
