@@ -46,7 +46,6 @@ http://localhost:8081/user
 ### TODO
 
 I haven't finished these features yet.
-* If a user tries to use the /nick command to choose an existing name, the operation should fail.
 * Need to implement message logging
 * Need to finish the REST API endpoints
 
