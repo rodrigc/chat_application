@@ -76,8 +76,22 @@ func newNick(u *User, c []string) error {
 		return nil
 	}
 
-	msg := []byte(fmt.Sprintf("%s has been renamed to %s", u.name, c[1]))
-	u.name = c[1]
+	oldName := u.name
+	newName := c[1]
+
+	userMapMtx.Lock()
+	if _, ok := userMap[newName]; ok {
+		userMapMtx.Unlock()
+		msg := []byte(fmt.Sprintf("Cannot choose %s as new nick.  It is already being used", newName))
+		u.WriteTimestampedMessage(msg)
+		return nil
+	}
+	delete(userMap, oldName)
+	u.name = newName
+	userMap[newName] = u
+	userMapMtx.Unlock()
+
+	msg := []byte(fmt.Sprintf("%s has been renamed to %s", oldName, newName))
 	if u.room != nil {
 		u.room.WriteTimestampedMessage(msg)
 		return nil

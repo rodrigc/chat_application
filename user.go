@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"sync"
 
 	"github.com/rs/xid"
 )
@@ -23,6 +24,9 @@ type User struct {
 	room *Room
 }
 
+var userMap map[string]*User = make(map[string]*User)
+var userMapMtx sync.Mutex
+
 func generateRandomUserName() string {
 	return xid.New().String()
 }
@@ -32,7 +36,12 @@ func generateRandomUserName() string {
 //  - a randomly generated name,
 //  - a channel, which will be used to write messages back to the User
 func NewUser(conn net.Conn) *User {
-	return &User{name: generateRandomUserName(), conn: conn, msgToUser: make(chan []byte)}
+	u := User{name: generateRandomUserName(), conn: conn, msgToUser: make(chan []byte)}
+	userMapMtx.Lock()
+	// TODO: avoid collisions in map, even though we are generating a random name
+	userMap[u.name] = &u
+	userMapMtx.Unlock()
+	return &u
 }
 
 // PrintBanner prints a banner message which is sent back to the User
