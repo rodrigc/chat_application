@@ -12,6 +12,16 @@ func ChatServerStart() {
 	// by the server.  See commands.go.
 	RegisterCommands()
 
+	err := ParseConfigFile()
+	if err != nil {
+		fmt.Printf("Error parsing config file: %v\n", err)
+		os.Exit(1)
+	}
+
+	if chatConfig.logFile != "" {
+		fmt.Printf("Log file for messages: %s\n", chatConfig.logFile)
+	}
+
 	// When we start up, create a room #default
 	// that everyone joins by default.
 	defaultRoom, err := NewRoom("#default")
@@ -30,15 +40,16 @@ func ChatServerStart() {
 	go func() {
 		defer wg.Done()
 		fmt.Println("goroutine telnet server")
-		sock, err := net.Listen("tcp", ":8080")
+		sock, err := net.Listen("tcp", fmt.Sprintf("%s:%d", chatConfig.Host, chatConfig.Port))
 		if err != nil {
-			fmt.Println("Cannot bind to port 8080")
+			fmt.Printf("Cannot bind to port %d", chatConfig.Port)
 			os.Exit(1)
 		}
+		fmt.Printf("Started telnet server on port %d\n", chatConfig.Port)
 		for {
 			conn, err := sock.Accept()
 			if err != nil {
-				// handle error
+				// TODO: need to handle error
 			}
 
 			go HandleUserConnection(conn)
@@ -49,7 +60,7 @@ func ChatServerStart() {
 	// This will be the dispatch loop of the REST API.
 	go func() {
 		defer wg.Done()
-		fmt.Println("goroutine REST API")
+		fmt.Printf("Started REST API endpoint on port %d\n", chatConfig.RestAPIPort)
 	}()
 
 	wg.Wait()
