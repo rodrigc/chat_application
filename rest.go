@@ -43,6 +43,6 @@ func RestAPIServer(wg sync.WaitGroup) {
 		Addr:    fmt.Sprintf("%s:%d", chatConfig.Host, chatConfig.RestAPIPort),
 	}
 
-	fmt.Printf("Starting router on port %d\n", chatConfig.RestAPIPort)
+	fmt.Printf("Starting REST API endpoint on port %d\n", chatConfig.RestAPIPort)
 	log.Fatal(srv.ListenAndServe())
 }
