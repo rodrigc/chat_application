@@ -9,7 +9,7 @@ import (
 
 // This function accepts incoming telnet connections.
 // This is the core dispatch loop for the chat server.
-func TelnetServer(wg sync.WaitGroup) {
+func TelnetServer(wg *sync.WaitGroup) {
 	defer wg.Done()
 	sock, err := net.Listen("tcp", fmt.Sprintf("%s:%d", chatConfig.Host, chatConfig.Port))
 	if err != nil {

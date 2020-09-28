@@ -36,11 +36,11 @@ func ChatServerStart() {
 
 	// This goroutine accepts incoming telnet connections.
 	// This is the core dispatch loop for the chat server.
-	go TelnetServer(wg)
+	go TelnetServer(&wg)
 
 	// This goroutine accepts incoming  HTTP connections.
 	// This will be the dispatch loop of the REST API.
-	go RestAPIServer(wg)
+	go RestAPIServer(&wg)
 
 	wg.Wait()
 }
