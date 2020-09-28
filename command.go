@@ -72,7 +72,7 @@ func leaveRoom(u *User, c []string) error {
 
 func newNick(u *User, c []string) error {
 	if len(c) < 2 {
-		u.msgToUser <- []byte("New nickname not specified")
+		u.WriteTimestampedMessage([]byte("New nickname not specified"))
 		return nil
 	}
 
